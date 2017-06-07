@@ -3,7 +3,16 @@
 if ( !defined('ABSPATH') ) return;
 
 function shortcode_voucher_management_page( $atts, $content = '' ) {
-	if ( !is_user_logged_in() ) auth_redirect();
+	if ( !is_user_logged_in() ) {
+		ob_start();
+		echo '<h2>You must be logged in to continue</h2>';
+		wp_login_form();
+		return ob_get_clean();
+	}
+	
+	if ( !current_user_can( 'edit_voucher_applications' ) ) {
+		return __('Sorry, you are not allowed to access this page.' );
+	}
 	
 	$args = array(
 		'post_type' => 'voucher_application',

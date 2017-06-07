@@ -48,6 +48,10 @@ function register_voucher_application_post_type() {
 		'publicly_queryable'    => false,
 		'rewrite'               => false,
 	    'menu_icon'             => 'dashicons-media-text',
+	    
+	    // Custom permissions:
+		'capability_type'     => array('edit_voucher_application','edit_voucher_applications'),
+		'map_meta_cap'        => true,
 	);
 	register_post_type( 'voucher_application', $args );
 	
@@ -174,6 +178,63 @@ function voucher_show_status_and_action_details($voucher_id) {
 	<?php
 }
 
+// ADMIN BAR: Add  link to manage vouchers
+function manage_vouchers_admin_bar_link() {
+	global $wp_admin_bar;
+	
+	if ( !current_user_can( 'edit_voucher_applications' ) ) return;
+	
+	if ( !function_exists('get_field') ) return;
+	
+	$manage_page_id = get_field( 'voucher_management_page', 'options' );
+	if ( !$manage_page_id ) return;
+	
+	$args = array(
+		'post_type' => 'voucher_application',
+		'post_status' => 'any',
+		'posts_per_page' => 1,
+	    'meta_query' => array(
+		    array(
+	            'key' => 'voucher_completed',
+	            'value' => '1',
+	            'compare' => '!=',
+	            'type' => 'NUMERIC'
+		    )
+	    ),
+	);
+	
+	$q = new WP_Query($args);
+	$voucher_count = $q->found_posts;
+	
+	$title = 'Vouchers';
+	if ( $voucher_count > 0 ) {
+		$title .= ' <span class="pending-vouchers-count">('. $voucher_count .' Pending)</span>';
+	}else{
+		$title .= ' <span class="no-pending-vouchers">(None Pending)</span>';
+	}
+	
+	$wp_admin_bar->add_node( array(
+		'id' => 'spot-vouchers',
+		'title' => $title,
+		'href' => get_permalink( $manage_page_id ),
+		'meta' => array(
+		
+		),
+	));
+	
+	/* add_node args:
+	 *     @type string $id     ID of the item.
+	 *     @type string $title  Title of the node.
+	 *     @type string $parent Optional. ID of the parent node.
+	 *     @type string $href   Optional. Link for the item.
+	 *     @type bool   $group  Optional. Whether or not the node is a group. Default false.
+	 *     @type array  $meta   Meta data including the following keys: 'html', 'class', 'rel', 'lang', 'dir',
+	 *                          'onclick', 'target', 'title', 'tabindex'. Default empty.
+	 */
+}
+
+add_action( 'wp_before_admin_bar_render', 'manage_vouchers_admin_bar_link' );
+
 /**
  * Returns a URL that will mark the given voucher as PENDING. Redirect URL can be provided, defaults to current URL.
  *
@@ -213,6 +274,11 @@ function voucher_change_status_from_link() {
 	$voucher_id = (int) $_REQUEST['completed_voucher_id'];
 	
 	if ( $voucher_id && get_post_type( $voucher_id ) == 'voucher_application' ) {
+		
+		if ( !current_user_can( 'edit_voucher_applications' ) ) {
+			wp_die( __( 'Sorry, you are not allowed to access this page.' ) );
+			exit;
+		}
 		
 		if ( wp_verify_nonce($nonce, 'voucher-complete') ) {
 			// Complete a voucher
