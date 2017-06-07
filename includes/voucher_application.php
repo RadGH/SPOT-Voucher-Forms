@@ -38,7 +38,7 @@ function register_voucher_application_post_type() {
 	$args = array(
 		'label'                 => 'Voucher Application',
 		'labels'                => $labels,
-		'supports'              => array( 'title' ),
+		'supports'              => array( 'title', 'revisions' ),
 		'hierarchical'          => false,
 		'public'                => true,
 		'show_in_nav_menus'     => false,
