@@ -77,6 +77,7 @@ function voucher_application_fields_from_gf( $entry, $form ) {
 	
 	// These map to field IDs in the form. Decimals are for subfields. Assistance can have multiple values and is special.
 	$field_keys = array(
+		'call_date' => 29,
 		'income' => 1,
 		'employment' => 2,
 		'assistance' => 3, // can have multiple values eg: 3.1, 3.2, 3.3
@@ -349,6 +350,7 @@ add_action( 'template_redirect', 'link_display_printable_voucher' );
 
 function generate_printable_voucher( $voucher_id ) {
 	$fields = array(
+		'call_date' => null,
 		'income' => null,
 		'employment' => null,
 		'assistance' => null,
@@ -377,6 +379,16 @@ function generate_printable_voucher( $voucher_id ) {
 	
 	foreach( $fields as $key => $value ) {
 		if ( isset($meta[$key]) ) $fields[$key] = $meta[$key][0];
+	}
+	
+	if ( $fields['call_date'] ) {
+		$fields['call_date'] = date('F j, Y', strtotime($fields['call_date']));
+	}
+	
+	if ( empty($fields['income']) && $fields['income'] !== '0' && $fields['income'] !== 0 ) {
+		$income_text = 'My monthly household income is <span class="user-input"><em>(Not Provided)</em></span>.';
+	}else{
+		$income_text = 'My monthly household income is <span class="user-input">'. esc_attr($fields['income']) .'</span>.';
 	}
 	
 	// Format assistance formatting with "Other" option as a separate field, add it in parenthesis
@@ -459,9 +471,10 @@ function generate_printable_voucher( $voucher_id ) {
 	   within 48 hours (usually sooner) to confirm eligibility and arrange your co-pay. You will then be provided
 	   with info to contact the clinic and make your appointment.</p>
 	
-	<p>My monthly household income is <span class="user-input"><?php echo esc_attr($fields['income']); ?></span>. <br>
+	<p>I prefer to be contacted on <span class="user-input"><?php echo esc_attr($fields['call_date']); ?></span>.<br>
+		<?php echo $income_text; ?><br>
 	   I am currently <span class="user-input"><?php echo esc_attr($fields['employment']); ?></span>. <br>
-	   <?php echo $assistance_text; /* Not escaped */ ?><br>
+	   <?php echo $assistance_text; ?><br>
 	   I am <span class="user-input"><?php echo (strtolower($fields['homeless']) == 'yes') ? 'currently homeless' : 'NOT homeless'; ?></span>.</p>
 	
 	<table>
