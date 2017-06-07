@@ -77,7 +77,6 @@ function voucher_application_fields_from_gf( $entry, $form ) {
 	
 	// These map to field IDs in the form. Decimals are for subfields. Assistance can have multiple values and is special.
 	$field_keys = array(
-		'call_date' => 29,
 		'income' => 1,
 		'employment' => 2,
 		'assistance' => 3, // can have multiple values eg: 3.1, 3.2, 3.3
@@ -89,8 +88,8 @@ function voucher_application_fields_from_gf( $entry, $form ) {
 		'home_phone' => 9,
 		'cell_phone' => 10,
 		'email_address' => 11,
-		'city' => "12.3",
-		'zip' => "12.5",
+		'city' => 30,
+		'zip' => 31,
 		
 		'dog_name' => 20,
 		'dog_breed' => 21,
@@ -117,6 +116,9 @@ function voucher_application_fields_from_gf( $entry, $form ) {
 	
 	foreach( $field_keys as $field_key => $form_index ) {
 		$value = !empty($entry[$form_index]) ? $entry[$form_index] : null;
+		
+		// Try using a string for the key if we were trying an integer before
+		if ( $value === null && is_int($form_index) ) $value = !empty($entry[(string) $form_index]) ? $entry[(string) $form_index] : null;
 		
 		// Get the list of fields for assistance, eg, 3.7 = Other
 		if ( $field_key == 'assistance' ) {
@@ -350,7 +352,6 @@ add_action( 'template_redirect', 'link_display_printable_voucher' );
 
 function generate_printable_voucher( $voucher_id ) {
 	$fields = array(
-		'call_date' => null,
 		'income' => null,
 		'employment' => null,
 		'assistance' => null,
@@ -379,10 +380,6 @@ function generate_printable_voucher( $voucher_id ) {
 	
 	foreach( $fields as $key => $value ) {
 		if ( isset($meta[$key]) ) $fields[$key] = $meta[$key][0];
-	}
-	
-	if ( $fields['call_date'] ) {
-		$fields['call_date'] = date('F j, Y', strtotime($fields['call_date']));
 	}
 	
 	if ( empty($fields['income']) && $fields['income'] !== '0' && $fields['income'] !== 0 ) {
@@ -439,6 +436,12 @@ function generate_printable_voucher( $voucher_id ) {
 			padding-top: 3px;
 		}
 		
+		.underline {
+			color: #fff;
+			color: transparent;
+			border-bottom: 1px solid #888;
+		}
+		
 		@media screen {
 			.page {
 				max-width: 700px;
@@ -471,8 +474,9 @@ function generate_printable_voucher( $voucher_id ) {
 	   within 48 hours (usually sooner) to confirm eligibility and arrange your co-pay. You will then be provided
 	   with info to contact the clinic and make your appointment.</p>
 	
-	<p>I prefer to be contacted on <span class="user-input"><?php echo esc_attr($fields['call_date']); ?></span>.<br>
-		<?php echo $income_text; ?><br>
+	<p>Application Date: <span class="underline">_________________________</span></p>
+	
+	<p><?php echo $income_text; ?><br>
 	   I am currently <span class="user-input"><?php echo esc_attr($fields['employment']); ?></span>. <br>
 	   <?php echo $assistance_text; ?><br>
 	   I am <span class="user-input"><?php echo (strtolower($fields['homeless']) == 'yes') ? 'currently homeless' : 'NOT homeless'; ?></span>.</p>
@@ -489,7 +493,7 @@ function generate_printable_voucher( $voucher_id ) {
 				Home Phone: <span class="user-input"><?php echo esc_attr($fields['home_phone']); ?></span><br>
 				Cell Phone: <span class="user-input"><?php echo esc_attr($fields['cell_phone']); ?></span><br>
 				Email: <span class="user-input"><?php echo esc_attr($fields['email_address']); ?></span><br>
-				City/State: <span class="user-input"><?php echo esc_attr($fields['city']); ?></span></td>
+				City / Zip: <span class="user-input"><?php echo esc_attr($fields['city']); ?> / <?php echo esc_attr($fields['zip']); ?></span></td>
 			<td style="vertical-align: top;">Dog's Name: <span class="user-input"><?php echo esc_attr($fields['dog_name']); ?></span><br>
 				Breed: <span class="user-input"><?php echo esc_attr($fields['dog_breed']); ?></span><br>
 				Gender: <span class="user-input"><?php echo esc_attr($fields['dog_gender']); ?></span><br>
@@ -502,27 +506,29 @@ function generate_printable_voucher( $voucher_id ) {
 	
 	<p>How did you hear about S.P.O.T? <span class="user-input"><?php echo esc_attr($fields['referral']); ?></span></p>
 	
+	<br>
+	<hr />
+	
 	<p class="spot-only"><em>For S.P.O.T use only, please do not fill out info below.</em></p>
 	
-	<hr />
 	
 	<table>
 		<tbody>
 		<tr>
 			<td style="vertical-align: top; padding-top: 10px;">Client co-pay:</td>
-			<td style="vertical-align: top; padding-top: 10px; padding-right: 20px;">_________________________</td>
+			<td style="vertical-align: top; padding-top: 10px; padding-right: 20px;"><span class="underline">_________________________</span></td>
 			<td style="vertical-align: top; padding-top: 10px;"></td>
 			<td style="vertical-align: top; padding-top: 10px;"></td>
 		</tr>
 		<tr>
 			<td style="vertical-align: top; padding-top: 20px;">S.P.O.T. co-pay:</td>
-			<td style="vertical-align: top; padding-top: 20px; padding-right: 20px;">_________________________</td>
+			<td style="vertical-align: top; padding-top: 20px; padding-right: 20px;"><span class="underline">_________________________</span></td>
 			<td style="vertical-align: top; padding-top: 20px;">Extra Charges:</td>
-			<td style="vertical-align: top; padding-top: 20px;">___ IV $7 ___Sr $25-30 ___ Crypt $13<br><br>
+			<td style="vertical-align: top; padding-top: 20px;"><span class="underline">___</span> IV $7 <span class="underline">___</span>Sr $25-30 <span class="underline">___</span> Crypt $13<br><br>
 			
-			                                 ___PG $27-30 ___OW $ 1 or $2 lb over 90<br><br>
+			                                 <span class="underline">___</span>PG $27-30 <span class="underline">___</span>OW $ 1 or $2 lb over 90<br><br>
 			
-			                                 ___ Other $</td>
+			                                 <span class="underline">___</span> Other $</td>
 		</tr>
 		</tbody>
 	</table>
@@ -533,8 +539,8 @@ function generate_printable_voucher( $voucher_id ) {
 			<td style="vertical-align: top;">Voucher Number:</td>
 		</tr>
 		<tr>
-			<td style="vertical-align: top; padding-right: 20px;">_________________________</td>
-			<td style="vertical-align: top;">_________________________</td>
+			<td style="vertical-align: top; padding-right: 20px;"><span class="underline">_________________________</span></td>
+			<td style="vertical-align: top;"><span class="underline">_________________________</span></td>
 		</tr>
 		</tbody>
 	</table>
