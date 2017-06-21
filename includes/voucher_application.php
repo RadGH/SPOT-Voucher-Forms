@@ -429,7 +429,6 @@ function generate_printable_voucher( $voucher_id ) {
 		
 		.table-h td {
 			padding-bottom: 3px;
-			border-bottom: 1px solid #ccc;
 		}
 		
 		.table-h + tr td {
@@ -499,12 +498,6 @@ function generate_printable_voucher( $voucher_id ) {
 	</table>
 	
 	<p>How did you hear about S.P.O.T? <span class="user-input"><?php echo esc_attr($fields['referral']); ?></span></p>
-	
-	<br>
-	<hr />
-	
-	<p class="spot-only"><em>For S.P.O.T use only, please do not fill out info below.</em></p>
-	
 	
 	<table>
 		<tbody>
