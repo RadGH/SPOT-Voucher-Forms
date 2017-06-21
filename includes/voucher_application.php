@@ -468,12 +468,6 @@ function generate_printable_voucher( $voucher_id ) {
 		<a href="<?php echo site_url(); ?>">&larr; Return to SPOT Website</a>
 	</div>
 	
-	<p>S.P.O.T. raises funds to assist low/no income Lane County dog owners with co-pays for spay/neuter vouchers.
-	   Voucher amounts vary depending on need. Because we must raise all our funds, we ask our clients to contribute
-	   what they can toward the fee. Please complete this form and forward to S.P.O.T. A volunteer will contact you
-	   within 48 hours (usually sooner) to confirm eligibility and arrange your co-pay. You will then be provided
-	   with info to contact the clinic and make your appointment.</p>
-	
 	<p>Application Date: <span class="underline">_________________________</span></p>
 	
 	<p><?php echo $income_text; ?><br>
