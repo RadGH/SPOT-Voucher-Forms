@@ -414,8 +414,8 @@ function generate_printable_voucher( $voucher_id ) {
 		body {
 			margin: 0;
 			font-family: Calibri, Helvetica, Arial, sans-serif;
-			font-size: 16px;
-			line-height: 22px;
+			font-size: 20px;
+			line-height: 26px;
 		}
 		
 		span.user-input {
@@ -510,19 +510,22 @@ function generate_printable_voucher( $voucher_id ) {
 		<tbody>
 		<tr>
 			<td style="vertical-align: top; padding-top: 10px;">Client co-pay:</td>
-			<td style="vertical-align: top; padding-top: 10px; padding-right: 20px;"><span class="underline">_________________________</span></td>
+			<td style="vertical-align: top; padding-top: 10px; padding-right: 20px;"><span class="underline">_________________</span></td>
 			<td style="vertical-align: top; padding-top: 10px;"></td>
 			<td style="vertical-align: top; padding-top: 10px;"></td>
 		</tr>
 		<tr>
 			<td style="vertical-align: top; padding-top: 20px;">S.P.O.T. co-pay:</td>
-			<td style="vertical-align: top; padding-top: 20px; padding-right: 20px;"><span class="underline">_________________________</span></td>
+			<td style="vertical-align: top; padding-top: 20px; padding-right: 20px;"><span class="underline">_________________</span></td>
 			<td style="vertical-align: top; padding-top: 20px;">Extra Charges:</td>
-			<td style="vertical-align: top; padding-top: 20px;"><span class="underline">___</span> IV $7 <span class="underline">___</span>Sr $25-30 <span class="underline">___</span> Crypt $13<br><br>
-			
-			                                 <span class="underline">___</span>PG $27-30 <span class="underline">___</span>OW $ 1 or $2 lb over 90<br><br>
-			
-			                                 <span class="underline">___</span> Other $</td>
+			<td style="vertical-align: top; padding-top: 20px;">
+				<span class="underline">___</span> IV $7<br>
+				<span class="underline">___</span> Sr $25-30<br>
+				<span class="underline">___</span> Crypt $13<br><br>
+				<span class="underline">___</span> PG $27-30<br>
+				<span class="underline">___</span> OW $ 1 or $2 lb over 90<br><br>
+				<span class="underline">___</span> Other $
+			</td>
 		</tr>
 		</tbody>
 	</table>
