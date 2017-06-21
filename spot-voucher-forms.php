@@ -2,7 +2,7 @@
 /*
 Plugin Name: SPOT Voucher Forms
 Description: Pet Spay and Neuter applications made through Gravity Forms can be managed by SPOT staff members, and a printable form can be downloaded.
-Version: 1.0.0
+Version: 1.0.1
 Author: Radley Sustaire
 Author URI: http://radleysustaire.com/
 License: GPLv3
@@ -13,7 +13,7 @@ if ( !defined('ABSPATH') ) return;
 
 define( 'SVF_URL', untrailingslashit(plugin_dir_url( __FILE__ )) );
 define( 'SVF_PATH', dirname(__FILE__) );
-define( 'SVF_VERSION', '1.0.0' );
+define( 'SVF_VERSION', '1.0.1' );
 
 function svf_initialize_plugin() {
 	if ( !class_exists('acf') ) {
